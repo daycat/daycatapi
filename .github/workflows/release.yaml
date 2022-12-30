@@ -1,0 +1,50 @@
+# workflow name
+name: Release
+
+# on events
+on:
+  push:
+    tags:
+      - 'v*'
+      # workflow tasks
+jobs:
+  generate:
+    name: Generate cross-platform builds
+    runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v3
+      - name: Get tag
+        uses: olegtarasov/get-tag@v2
+        id: tagName
+      - name: Get time
+        uses: gerred/actions/current-time@master
+        id: current-time
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+      - name: Build files
+        uses: tobyxdd/go-cross-build@d00fc41eb205f57dd90f6e5af4613e21c7ebe73f
+        with:
+          platforms: 'linux/amd64,linux/arm,linux/arm64,linux/s390x'
+          name: 'daycatapi'
+          compress: 'false'
+          dest: 'dist'
+      - name: Generate hashes
+        run: |
+          cd dist
+          for f in $(find . -type f); do
+            sha256sum $f | sudo tee -a hashes.txt
+          done
+      - name: Upload
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ./dist/daycatapi-linux-amd64
+            ./dist/daycatapi-linux-arm
+            ./dist/daycatapi-linux-arm64
+            ./dist/daycatapi-linux-s390x
+            ./dist/hashes.txt
