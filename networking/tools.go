@@ -43,8 +43,8 @@ type IpRecord struct {
 }
 
 type GeneralStatus struct {
-	Sucess bool
-	Error  string
+	Success bool
+	Error   string
 }
 
 type DomainResponse struct {
@@ -76,8 +76,8 @@ func IpInfo(c *gin.Context) {
 	dba, err := maxminddb.Open("networking/GeoLite2-ASN.mmdb")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, GeneralStatus{
-			Sucess: false,
-			Error:  err.Error(),
+			Success: false,
+			Error:   err.Error(),
 		})
 		return
 	}
@@ -97,8 +97,8 @@ func IpInfo(c *gin.Context) {
 	result.ISOCode = resultc.Country.ISOCode
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, GeneralStatus{
-			Sucess: false,
-			Error:  err.Error(),
+			Success: false,
+			Error:   err.Error(),
 		})
 		return
 	}
@@ -111,8 +111,8 @@ func AssignDomain(c *gin.Context) {
 	rtype := c.Query("type")
 	if rtype != "A" && rtype != "AAAA" {
 		c.JSON(http.StatusBadRequest, GeneralStatus{
-			Sucess: false,
-			Error:  "Invalid Record Type",
+			Success: false,
+			Error:   "Invalid Record Type",
 		})
 		return
 	}
@@ -170,15 +170,15 @@ func ToggleProxy(c *gin.Context) {
 	} else if c.Query("proxy") == "false" {
 		proxyState = false
 	} else {
-		c.JSON(http.StatusBadRequest, GeneralStatus{Sucess: false, Error: "Invalid Proxy State: " + c.Query("proxy") + " is not a valid state (true/false)"})
+		c.JSON(http.StatusBadRequest, GeneralStatus{Success: false, Error: "Invalid Proxy State: " + c.Query("proxy") + " is not a valid state (true/false)"})
 		return
 	}
 	proxy := BoolAddr(proxyState)
 	sqlDB, err := sql.Open("sqlite3", "./networking/domains.db")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, GeneralStatus{
-			Sucess: false,
-			Error:  err.Error(),
+			Success: false,
+			Error:   err.Error(),
 		})
 		return
 	}
@@ -188,8 +188,8 @@ func ToggleProxy(c *gin.Context) {
 	err = row.Scan(&CloudflareRecord)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, GeneralStatus{
-			Sucess: false,
-			Error:  err.Error(),
+			Success: false,
+			Error:   err.Error(),
 		})
 		return
 	}
@@ -200,14 +200,14 @@ func ToggleProxy(c *gin.Context) {
 	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, GeneralStatus{
-			Sucess: false,
-			Error:  err.Error(),
+			Success: false,
+			Error:   err.Error(),
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, GeneralStatus{
-		Sucess: true,
-		Error:  "",
+		Success: true,
+		Error:   "",
 	})
 }
