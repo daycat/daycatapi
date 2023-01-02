@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/daycat/daycatapi/config"
+	"github.com/daycat/daycatapi/external"
 	"github.com/daycat/daycatapi/networking"
 	"github.com/gin-gonic/gin"
 )
@@ -13,6 +14,7 @@ func main() {
 	r.GET("/ipinfo", networking.IpInfo)
 	r.GET("/assign", networking.AssignDomain)
 	r.GET("/toggleProxy", networking.ToggleProxy)
+	r.GET("/rproxy/*proxyurl", external.Rproxy)
 	r.Run()
 
 }
