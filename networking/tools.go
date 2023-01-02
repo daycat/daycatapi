@@ -67,7 +67,7 @@ func randString(n int) string {
 }
 
 func Whoami(c *gin.Context) {
-	c.String(http.StatusOK, c.ClientIP())
+	c.String(http.StatusOK, c.ClientIP()+"\n")
 }
 
 func IpInfo(c *gin.Context) {
