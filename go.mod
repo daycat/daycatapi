@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/cloudflare/cloudflare-go v0.57.1
 	github.com/gin-gonic/gin v1.8.2
+	github.com/k0kubun/pp/v3 v3.2.0
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/oschwald/maxminddb-golang v1.10.0
 	gopkg.in/yaml.v3 v3.0.1

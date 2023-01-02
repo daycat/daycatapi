@@ -10,17 +10,23 @@ import (
 
 func whitelisted(url *url.URL) bool {
 	if url.Scheme == "http" || url.Scheme == "https" {
-		if url.Host == "github.com" || url.Host == "raw.githubusercontent.com" || url.Host == "raw.githubusercontents.com" {
+		if url.Host == "github.com" || url.Host == "raw.githubusercontent.com" || url.Host == "raw.githubusercontents.com" || url.Host == "objects.githubusercontent.com" || url.Host == "codeload.github.com" {
 			return true
 		}
 	}
 	return false
-
+}
+func reWriteRedirect(resp *http.Response) (err error) {
+	if resp.StatusCode == 301 || resp.StatusCode == 302 {
+		print(resp.Header.Get("Location"))
+		//add outside url to redirected url
+		resp.Header.Set("Location", "https://api.daycat.space/rproxy/"+resp.Header.Get("Location"))
+	}
+	return nil
 }
 
 func Rproxy(c *gin.Context) {
 	proxyurl := strings.TrimLeft(c.Param("proxyurl"), "/")
-	print(proxyurl)
 	if proxyurl == "" {
 		c.String(400, "No URL provided")
 		return
@@ -43,5 +49,8 @@ func Rproxy(c *gin.Context) {
 		req.URL.Path = remote.Path
 		req.Host = remote.Host
 	}
+
+	proxy.ModifyResponse = reWriteRedirect
+
 	proxy.ServeHTTP(c.Writer, c.Request)
 }
