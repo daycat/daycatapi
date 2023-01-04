@@ -10,7 +10,7 @@ import (
 
 func whitelisted(url *url.URL) bool {
 	if url.Scheme == "http" || url.Scheme == "https" {
-		if url.Host == "github.com" || url.Host == "raw.githubusercontent.com" || url.Host == "raw.githubusercontents.com" || url.Host == "objects.githubusercontent.com" || url.Host == "codeload.github.com" {
+		if url.Host == "github.com" || url.Host == "raw.githubusercontent.com" || url.Host == "raw.githubusercontents.com" || url.Host == "objects.githubusercontent.com" || url.Host == "codeload.github.com" || url.Host == "api.github.com" {
 			return true
 		}
 	}
