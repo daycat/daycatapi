@@ -8,11 +8,15 @@ import (
 var ApiKey string
 var ApiEmail string
 var Zoneid string
+var RootDomain string
+var OutsideURL string
 
 type configFile struct {
-	ApiKey   string `yaml:"ApiKey"`
-	ApiEmail string `yaml:"ApiEmail"`
-	Zoneid   string `yaml:"Zoneid"`
+	ApiKey     string `yaml:"ApiKey"`
+	ApiEmail   string `yaml:"ApiEmail"`
+	Zoneid     string `yaml:"Zoneid"`
+	RootDomain string `yaml:"RootDomain"`
+	OutsideURL string `yaml:"OutsideURL"`
 }
 
 func GetConfig(path string) {
@@ -30,5 +34,7 @@ func GetConfig(path string) {
 	ApiKey = config.ApiKey
 	ApiEmail = config.ApiEmail
 	Zoneid = config.Zoneid
+	RootDomain = config.RootDomain
+	OutsideURL = config.OutsideURL
 
 }

@@ -117,7 +117,7 @@ func AssignDomain(c *gin.Context) {
 		return
 	}
 
-	Domain := randString(6) + ".dcapi.top"
+	Domain := randString(6) + config.RootDomain
 	ReferenceID := randString(16)
 	var result DomainResponse
 	result.Domain = Domain

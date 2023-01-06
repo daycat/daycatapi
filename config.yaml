@@ -1,3 +1,5 @@
 ApiKey: ""
 ApiEmail: ""
 Zoneid: ""
+RootDomain: ""
+OutsideURL: ""

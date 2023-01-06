@@ -1,6 +1,7 @@
 package external
 
 import (
+	"github.com/daycat/daycatapi/config"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/http/httputil"
@@ -20,7 +21,7 @@ func reWriteRedirect(resp *http.Response) (err error) {
 	if resp.StatusCode == 301 || resp.StatusCode == 302 {
 		print(resp.Header.Get("Location"))
 		//add outside url to redirected url
-		resp.Header.Set("Location", "https://api.daycat.space/rproxy/"+resp.Header.Get("Location"))
+		resp.Header.Set("Location", config.OutsideURL+"/rproxy/"+resp.Header.Get("Location"))
 	}
 	return nil
 }
