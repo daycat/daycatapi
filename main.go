@@ -15,6 +15,7 @@ func main() {
 	r.GET("/assign", networking.AssignDomain)
 	r.GET("/toggleProxy", networking.ToggleProxy)
 	r.GET("/rproxy/*proxyurl", external.Rproxy)
+	r.GET("/warp", external.GetWarpConfig)
 	r.Run()
 
 }

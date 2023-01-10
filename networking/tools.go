@@ -57,7 +57,7 @@ type RecordDBHandler struct {
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
 
-func randString(n int) string {
+func RandString(n int) string {
 	rand.Seed(time.Now().Unix())
 	b := make([]byte, n)
 	for i := range b {
@@ -117,8 +117,8 @@ func AssignDomain(c *gin.Context) {
 		return
 	}
 
-	Domain := randString(6) + config.RootDomain
-	ReferenceID := randString(16)
+	Domain := RandString(6) + config.RootDomain
+	ReferenceID := RandString(16)
 	var result DomainResponse
 	result.Domain = Domain
 	result.ReferenceID = ReferenceID
