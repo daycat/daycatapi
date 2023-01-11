@@ -24,6 +24,12 @@ var (
 		IdleConnTimeout:       90 * time.Second,
 		TLSHandshakeTimeout:   10 * time.Second,
 		ExpectContinueTimeout: 1 * time.Second,
+	} // from wgcf
+	DefaultHeader = http.Header{
+		"User-Agent":        {"okhttp/3.12.1"},
+		"Accept":            {"application/json"},
+		"Cf-Client-Version": {"a-6.3-1922"},
+		"Content-Type":      {"application/json"},
 	}
 )
 
@@ -43,24 +49,21 @@ func Register(pk string) account {
 	// registers account
 	client := http.Client{Transport: DefaultTransport}
 	req, err := http.NewRequest("POST", "https://api.cloudflareclient.com/v0a1922/reg", strings.NewReader(string(rDJson)))
-	req.Header.Set("User-Agent", "okhttp/3.12.1")
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Cf-Client-Version", "a-6.3-1922")
-	req.Header.Set("Content-Type", "application/json")
+	req.Header = DefaultHeader
 	resp, err := client.Do(req)
-	// resp, err := http.Post("https://api.cloudflareclient.com/v0a1922/reg", "application/json", bytes.NewBuffer(rDJson))
 	if err != nil {
 		pp.Print(err)
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
-	pp.Print(string(body))
-	//pp.Print(string(body))
 	if err != nil {
 		pp.Print(err)
 	}
 	var accountData account
-	json.Unmarshal(body, &accountData)
+	err = json.Unmarshal(body, &accountData)
+	if err != nil {
+		pp.Print(err)
+	}
 	return accountData
 }
 func Activate(accountData account) {
@@ -75,13 +78,10 @@ func Activate(accountData account) {
 	rD2Json, _ := json.Marshal(rD2)
 	req, err := http.NewRequest("PATCH", "https://api.cloudflareclient.com/v0a1922/reg/"+accountData.ID+"/account/reg/"+accountData.ID, strings.NewReader(string(rD2Json)))
 	if err != nil {
-		// handle err
+		return
 	}
-	req.Header.Set("User-Agent", "okhttp/3.12.1")
-	req.Header.Set("Accept", "application/json")
+	req.Header = DefaultHeader
 	req.Header.Set("Authorization", "Bearer "+accountData.Token)
-	req.Header.Set("Cf-Client-Version", "a-6.3-1922")
-	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
 	if err != nil {
 		// handle err
@@ -96,14 +96,9 @@ func Activate(accountData account) {
 	}
 	var device registeredDevice
 	json.Unmarshal(body, &device)
-	//pp.Print(device)
-	// gets account data
 	req, err = http.NewRequest("GET", "https://api.cloudflareclient.com/v0a1922/reg/"+accountData.ID, nil)
-	req.Header.Set("User-Agent", "okhttp/3.12.1")
-	req.Header.Set("Accept", "application/json")
+	req.Header = DefaultHeader
 	req.Header.Set("Authorization", "Bearer "+accountData.Token)
-	req.Header.Set("Cf-Client-Version", "a-6.3-1922")
-	req.Header.Set("Content-Type", "application/json")
 	resp, err = client.Do(req)
 	if err != nil {
 		return
@@ -115,25 +110,15 @@ func Activate(accountData account) {
 		return
 		//pp.Print(err)
 	}
-	var accountData2 account
-	json.Unmarshal(body, &accountData2)
-	//pp.Print(accountData2)
-	// set as active
 	req, err = http.NewRequest("PATCH", "https://api.cloudflareclient.com/v0a1922/reg/"+accountData.ID+"/account/reg/"+accountData.ID, strings.NewReader("{\"active\":true}"))
-	req.Header.Set("User-Agent", "okhttp/3.12.1")
-	req.Header.Set("Accept", "application/json")
+	req.Header = DefaultHeader
 	req.Header.Set("Authorization", "Bearer "+accountData.Token)
-	req.Header.Set("Cf-Client-Version", "a-6.3-1922")
-	req.Header.Set("Content-Type", "application/json")
 	resp, err = client.Do(req)
 	if err != nil {
 		//pp.Print(err)
 		return
 	}
 	defer resp.Body.Close()
-	body, err = io.ReadAll(resp.Body)
-	var rDed registeredDevice
-	json.Unmarshal(body, &rDed)
 	//pp.Print(rDed)
 
 }

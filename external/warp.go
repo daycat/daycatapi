@@ -179,6 +179,9 @@ func GetWarpConfig(c *gin.Context) {
 	privateKey, publicKey := generateKeyPair()
 	wgcfgformat := c.Query("format")
 	accountData := Register(publicKey)
+	if accountData.Config.Interface.Addresses.V4 == "" {
+		c.String(500, "Warp endpoint overloaded")
+	}
 	wgconfig := generateConfig(wgcfgformat, privateKey, accountData)
 	c.String(200, wgconfig)
 	go Activate(accountData)
