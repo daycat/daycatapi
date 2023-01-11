@@ -3,6 +3,7 @@ package networking
 import (
 	"context"
 	"database/sql"
+	"embed"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/daycat/daycatapi/config"
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,10 @@ import (
 	"net/http"
 	"time"
 )
+
+//go:embed GeoLite2-City.mmdb
+//go:embed GeoLite2-ASN.mmdb
+var f embed.FS
 
 type IpCity struct {
 	City struct {
@@ -27,12 +32,10 @@ type IpCity struct {
 		} `maxminddb:"names"`
 	} `maxminddb:"country"`
 }
-
 type IpAsn struct {
 	AutonomousSystemNumber       uint   `maxminddb:"autonomous_system_number"`
 	AutonomousSystemOrganization string `maxminddb:"autonomous_system_organization"`
 }
-
 type IpRecord struct {
 	Ip      string
 	City    string
@@ -41,12 +44,10 @@ type IpRecord struct {
 	AsnOrg  string
 	ISOCode string
 }
-
 type GeneralStatus struct {
 	Success bool
 	Error   string
 }
-
 type DomainResponse struct {
 	Domain      string
 	ReferenceID string
@@ -72,8 +73,10 @@ func Whoami(c *gin.Context) {
 
 func IpInfo(c *gin.Context) {
 	ip := c.Query("ip")
-	dbc, err := maxminddb.Open("networking/GeoLite2-City.mmdb")
-	dba, err := maxminddb.Open("networking/GeoLite2-ASN.mmdb")
+	city, _ := f.ReadFile("GeoLite2-City.mmdb")
+	asn, _ := f.ReadFile("GeoLite2-ASN.mmdb")
+	dbc, err := maxminddb.FromBytes(city)
+	dba, err := maxminddb.FromBytes(asn)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, GeneralStatus{
 			Success: false,

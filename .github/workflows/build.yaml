@@ -1,28 +1,32 @@
-# workflow name
-name: Build
+name: build
 
-# on events
 on:
   push:
     branches:
-      - 'main'
+      main
 
-
-      # workflow tasks
 jobs:
-  generate:
-    name: Generate cross-platform builds
+  xgo:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v2
-      - name: Build files
-        uses: tobyxdd/go-cross-build@d00fc41eb205f57dd90f6e5af4613e21c7ebe73f
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Build
+        uses: crazy-max/ghaction-xgo@v2
         with:
-          platforms: 'linux/amd64,linux/arm,linux/arm64,linux/s390x'
-          name: 'daycatapi'
-          compress: 'false'
-          dest: 'dist'
+          xgo_version: latest
+          go_version: 1.19
+          dest: dist
+          prefix: daycatapi
+          targets: linux/amd64,linux/arm64,darwin/arm64, darwin/amd64
+          v: true
+          x: false
+          race: false
+          ldflags: -s -w
+          buildmode: default
+          trimpath: true
       - name: Archive
         uses: actions/upload-artifact@v3
         with:
