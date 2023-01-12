@@ -1,5 +1,6 @@
 package external
 
+import "C"
 import (
 	"crypto/rand"
 	"encoding/base64"
@@ -181,6 +182,7 @@ func GetWarpConfig(c *gin.Context) {
 	accountData := Register(publicKey)
 	if accountData.Config.Interface.Addresses.V4 == "" {
 		c.String(500, "Warp endpoint overloaded")
+		return
 	}
 	wgconfig := generateConfig(wgcfgformat, privateKey, accountData)
 	c.String(200, wgconfig)
