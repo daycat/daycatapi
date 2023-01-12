@@ -2,6 +2,7 @@ package networking
 
 import (
 	"context"
+	"crypto/rand"
 	"database/sql"
 	"embed"
 	"github.com/cloudflare/cloudflare-go"
@@ -9,10 +10,9 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/oschwald/maxminddb-golang"
-	"math/rand"
+	"math/big"
 	"net"
 	"net/http"
-	"time"
 )
 
 //go:embed GeoLite2-City.mmdb
@@ -59,10 +59,13 @@ type RecordDBHandler struct {
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
 
 func RandString(n int) string {
-	rand.Seed(time.Now().Unix())
 	b := make([]byte, n)
 	for i := range b {
-		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+		c, err := rand.Int(rand.Reader, big.NewInt(int64(len(letterBytes))))
+		if err != nil {
+			panic(err)
+		}
+		b[i] = letterBytes[c.Int64()]
 	}
 	return string(b)
 }
