@@ -122,9 +122,8 @@ func AssignDomain(c *gin.Context) {
 		})
 		return
 	}
-
-	Domain := RandString(6) + config.RootDomain
 	ReferenceID := RandString(16)
+	Domain := ReferenceID[0:5] + "." + config.RootDomain
 	var result DomainResponse
 	result.Domain = Domain
 	result.ReferenceID = ReferenceID
